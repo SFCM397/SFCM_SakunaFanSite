@@ -1,0 +1,41 @@
+img{
+    max-width:100%;
+    height:auto;
+}
+.twitter-scroll{
+
+    display:flex;
+
+    gap:20px;
+
+    overflow-x:auto;
+
+    padding:20px 0;
+
+    scroll-behavior:smooth;
+}
+
+/* スクロールバーの高さ */
+.twitter-scroll::-webkit-scrollbar{
+    height:10px;
+}
+
+/* 投稿サイズ固定 */
+.tweet-box{
+
+    min-width:400px;
+
+    flex-shrink:0;
+}
+.tweet-box{
+    min-width:350px;
+    max-width:400px;
+    flex-shrink:0;
+}
+.twitter-scroll{
+    display:flex;
+    overflow-x:auto;
+    gap:20px;
+    padding-bottom:10px;
+}
+

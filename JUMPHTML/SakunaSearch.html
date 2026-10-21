@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>結城さくなまとめページ</title>
+
+    <meta name="description" content="結城さくなの配信・動画を検索・絞り込み">
+
+    <link rel="stylesheet" href="../CSS/SakunaSample.css">
+
+</head>
+
+
+<body class="search-page">
+
+    <!-- ハンバーガーボタン -->
+    <button class="menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- ハンバーガーメニュー -->
+    <nav id="quickMenu" class="quick-menu"></nav>
+
+
+    <!-- ========================================
+         ページタイトル
+         ======================================== -->
+
+    <section>
+
+        <h1>🎀結城さくなまとめ🐾</h1>
+
+        <h2>　配信・動画　-SEARCH-</h2>
+
+    </section>
+
+
+    <!-- ========================================
+         絞り込みエリア
+         ======================================== -->
+
+    <section class="search-area">
+
+        <h2> 配信・動画を絞り込み</h2>
+
+
+        <!-- 大分類 -->
+
+        <div class="filter-section">
+
+            <h3>ジャンル</h3>
+
+            <div id="category-buttons" class="filter-buttons">
+
+                <!-- すべて -->
+                <button class="filter-button active" data-category="all">
+                    すべて
+                </button>
+
+                <!-- ゲーム -->
+                <button class="filter-button" data-category="ゲーム">
+                    ゲーム
+                </button>
+
+                <!-- 歌枠 -->
+                <button class="filter-button" data-category="歌枠">
+                    歌枠
+                </button>
+
+                <!-- 雑談 -->
+                <button class="filter-button" data-category="雑談">
+                    雑談
+                </button>
+
+                <!-- なにこれ -->
+                <button class="filter-button" data-category="謎">
+                    なにこれ
+                </button>
+
+                <!-- 告知/お披露目 -->
+                <button class="filter-button" data-category="記念">
+                    記念日
+                </button>
+
+                <!-- メン限 -->
+                <button class="filter-button" data-category="メン限">
+                    メン限
+                </button>
+
+                <!-- パチンコ -->
+                <button class="filter-button" data-category="パチンコ">
+                    パチンコ
+                </button>
+
+                <!-- ご飯 -->
+                <button class="filter-button" data-category="ご飯">
+                    ご飯
+                </button>
+
+                <!-- さくもに -->
+                <button class="filter-button" data-category="さくもに">
+                    さくもに
+                </button>
+
+                <!-- コラボ -->
+                <button class="filter-button" data-category="コラボ">
+                    コラボ
+                </button>
+
+                <!-- PR -->
+                <button class="filter-button" data-category="PR">
+                    PR
+                </button>
+
+                <!-- 動画 -->
+                <button class="filter-button" data-category="動画">
+                    動画
+                </button>
+
+                <!-- 歌 -->
+                <button class="filter-button" data-category="歌">
+                    歌
+                </button>
+
+
+
+            </div>
+
+        </div>
+
+
+        <!-- 詳細分類 -->
+
+        <div class="filter-section" id="detail-section">
+
+            <h3>詳細</h3>
+
+            <div id="detail-buttons" class="filter-buttons">
+
+                <button class="filter-button active" data-detail="all">
+
+                    すべて
+
+                </button>
+
+                <button class="filter-button" data-detail="トルネコ">
+
+                    トルネコ
+
+                </button>
+
+                <button class="filter-button" data-detail="原神">
+
+                    原神
+
+                </button>
+
+                <button class="filter-button" data-detail="Minecraft">
+
+                    Minecraft
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- 絞り込み結果 -->
+
+        <div class="search-result">
+
+            <h3>検索結果</h3>
+
+            <p id="search-result-count">
+                読み込み中...
+            </p>
+
+            <div id="search-results" class="news-list">
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================
+         JSファイル
+         ======================================== -->
+
+    
+    <script src="../JS/Sakuna.js"></script>
+
+
+</body>
+
+</html>
