@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap");
 
-.menu-btn/* {background-color: #fdafbb;} */
+/* .menu-btn { background-color: #fdafbb; } */
 h1 {
     color: #000000;
 }
@@ -1954,4 +1954,627 @@ a:focus-visible, button:focus-visible, .menu-btn:focus-visible {
 }
 @media (prefers-reduced-motion: reduce) {
   .card, .news-card, .playlist-card, .btn { transition: none; }
+}
+
+/* =============================================================
+   SAKUNA CLEAR LUXE / 猫ボタン（統合・最新版）
+   表情はHTMLのJSがページ読み込みごとにランダム設定。
+   ============================================================= */
+:root {
+  --sakuna-cat-base: linear-gradient(125deg, #ffe4ef 0%, #fff9fd 55%, #d9f2ff 100%);
+  --sakuna-cat-selected: linear-gradient(120deg, #f9b9d6, #d0eafa);
+}
+
+/* 猫の顔付きボタン共通 */
+.btn, .profile-btn, .filter-button, .playlist-button, .playlist-back-button {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+  border: 2px solid rgba(255,255,255,.97);
+  border-radius: 24px 24px 28px 28px;
+  background-color: #fff5fb;
+  background-image: var(--sakuna-cat-face, none), var(--sakuna-cat-base);
+  background-repeat: no-repeat, no-repeat;
+  background-size: 54px 38px, cover;
+  background-position: right 11px center, center;
+  box-shadow: 0 7px 18px rgba(194,120,166,.20), inset 0 2px 0 #fff;
+  color: #795673;
+  font-weight: 700;
+  transform: none;
+  filter: none;
+  transition: box-shadow .3s ease, border-color .3s ease;
+}
+.btn, .filter-button, .playlist-button, .playlist-back-button {
+  min-height: 48px;
+  padding-right: 74px;
+  margin-top: 15px;
+}
+
+/* 猫耳は通常時もホバー時も同じ位置 */
+.btn::before, .btn::after,
+.profile-btn::before, .profile-btn::after,
+.filter-button::before, .filter-button::after,
+.playlist-button::before, .playlist-button::after,
+.playlist-back-button::before, .playlist-back-button::after {
+  content: "";
+  position: absolute;
+  top: -16px;
+  width: 25px;
+  height: 25px;
+  background: linear-gradient(150deg,#fff4f9 0%,#ffb8d7 68%,#f3a4c8 100%);
+  border: 1px solid rgba(255,255,255,.94);
+  border-radius: 5px;
+  clip-path: polygon(7% 100%, 10% 0%, 100% 100%);
+  pointer-events: none;
+  z-index: -1;
+  transition: none;
+}
+.btn::before, .profile-btn::before, .filter-button::before,
+.playlist-button::before, .playlist-back-button::before {
+  left: 10%;
+  transform: rotate(-12deg);
+}
+.btn::after, .profile-btn::after, .filter-button::after,
+.playlist-button::after, .playlist-back-button::after {
+  right: 10%;
+  transform: scaleX(-1) rotate(-12deg);
+}
+
+/* SNSは画像・名前の下に猫の表情を固定 */
+.profile-btn {
+  padding: 13px 14px 49px;
+  min-width: 110px;
+  margin-top: 12px;
+  background-position: center bottom 6px, center;
+}
+
+/* 選択中の絞り込みボタン：顔を変えずに背景だけ変更 */
+.filter-button.active {
+  background-image: var(--sakuna-cat-face, none), var(--sakuna-cat-selected);
+  color: #68465f;
+}
+
+/* hover/focus/active は顔の画像・位置・大きさを変更しない */
+.btn:hover, .btn:focus-visible, .btn:active,
+.profile-btn:hover, .profile-btn:focus-visible, .profile-btn:active,
+.filter-button:hover, .filter-button:focus-visible, .filter-button:active,
+.playlist-button:hover, .playlist-button:focus-visible, .playlist-button:active,
+.playlist-back-button:hover, .playlist-back-button:focus-visible, .playlist-back-button:active {
+  background-image: var(--sakuna-cat-face, none), var(--sakuna-cat-base);
+  background-size: 54px 38px, cover;
+  background-position: right 11px center, center;
+  transform: none;
+  filter: none;
+}
+.profile-btn:hover, .profile-btn:focus-visible, .profile-btn:active {
+  background-position: center bottom 6px, center;
+}
+.filter-button.active:hover, .filter-button.active:focus-visible, .filter-button.active:active {
+  background-image: var(--sakuna-cat-face, none), var(--sakuna-cat-selected);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover, .profile-btn:hover, .filter-button:hover,
+  .playlist-button:hover, .playlist-back-button:hover {
+    box-shadow: 0 9px 21px rgba(194,120,166,.24), inset 0 2px 0 #fff;
+    border-color: #fff;
+  }
+}
+@media (max-width: 600px) {
+  .btn, .filter-button, .playlist-button, .playlist-back-button {
+    min-height: 44px;
+    padding-right: 58px;
+    border-radius: 21px 21px 25px 25px;
+  }
+  .btn, .filter-button, .playlist-button, .playlist-back-button,
+  .btn:hover, .filter-button:hover, .playlist-button:hover, .playlist-back-button:hover,
+  .btn:focus-visible, .filter-button:focus-visible,
+  .playlist-button:focus-visible, .playlist-back-button:focus-visible,
+  .btn:active, .filter-button:active, .playlist-button:active, .playlist-back-button:active {
+    background-size: 42px 30px, cover;
+    background-position: right 7px center, center;
+  }
+  .btn::before, .btn::after, .profile-btn::before, .profile-btn::after,
+  .filter-button::before, .filter-button::after,
+  .playlist-button::before, .playlist-button::after,
+  .playlist-back-button::before, .playlist-back-button::after {
+    top: -12px;
+    width: 20px;
+    height: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn, .profile-btn, .filter-button, .playlist-button, .playlist-back-button {
+    transition: none;
+  }
+}
+
+
+/* =============================================================
+   通常・hover・focus・active で顔画像を同じレイヤーに固定する。
+   背景の shorthand による顔画像の消去・再出現を防止。
+   ============================================================= */
+.btn, .btn:hover, .btn:focus-visible, .btn:active,
+.profile-btn, .profile-btn:hover, .profile-btn:focus-visible, .profile-btn:active,
+.filter-button, .filter-button:hover, .filter-button:focus-visible, .filter-button:active,
+.playlist-button, .playlist-button:hover, .playlist-button:focus-visible, .playlist-button:active,
+.playlist-back-button, .playlist-back-button:hover, .playlist-back-button:focus-visible, .playlist-back-button:active {
+  background-image: var(--sakuna-cat-face, none), var(--sakuna-cat-base) !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-size: 54px 38px, cover !important;
+  background-position: right 11px center, center !important;
+  transform: none !important;
+  filter: none !important;
+  transition-property: box-shadow, border-color !important;
+}
+.filter-button.active, .filter-button.active:hover,
+.filter-button.active:focus-visible, .filter-button.active:active {
+  background-image: var(--sakuna-cat-face, none), var(--sakuna-cat-selected) !important;
+}
+.profile-btn, .profile-btn:hover, .profile-btn:focus-visible, .profile-btn:active {
+  background-position: center bottom 6px, center !important;
+}
+@media (max-width: 600px) {
+  .btn, .btn:hover, .btn:focus-visible, .btn:active,
+  .filter-button, .filter-button:hover, .filter-button:focus-visible, .filter-button:active,
+  .playlist-button, .playlist-button:hover, .playlist-button:focus-visible, .playlist-button:active,
+  .playlist-back-button, .playlist-back-button:hover, .playlist-back-button:focus-visible, .playlist-back-button:active {
+    background-size: 42px 30px, cover !important;
+    background-position: right 7px center, center !important;
+  }
+}
+
+/* ==========================================
+   固定ボタンとナビゲーションの重なり防止
+   ========================================== */
+
+/* PC：固定ボタン専用の上部スペース */
+body {
+    padding-top: 100px !important;
+}
+
+/* 固定ボタンを上部に整列 */
+.menu-btn,
+.search-button,
+.back-button {
+    position: fixed;
+    top: 18px !important;
+    z-index: 1000;
+}
+
+/* ハンバーガー：右上 */
+.menu-btn {
+    right: 20px !important;
+}
+
+/* 検索：ハンバーガーの左 */
+.search-button {
+    right: 80px !important;
+}
+
+/* 戻る：左上 */
+.back-button {
+    left: 20px !important;
+}
+
+/* ナビゲーションは通常の配置を維持 */
+.wide-navigation {
+    position: relative;
+    z-index: 1;
+}
+
+/* スマートフォン */
+@media (max-width: 600px) {
+    body {
+        padding-top: 85px !important;
+    }
+
+    .menu-btn,
+    .search-button,
+    .back-button {
+        top: 12px !important;
+    }
+
+    .menu-btn {
+        right: 12px !important;
+    }
+
+    .search-button {
+        right: 62px !important;
+    }
+
+    .back-button {
+        left: 12px !important;
+    }
+}
+
+/* ==========================================
+   SEARCH ジャンル・詳細ボタン
+   ホワイト × パステルピンク × 水色
+========================================== */
+
+/* ジャンル・詳細のボタン一覧 */
+.search-page .filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+/* 通常のボタン */
+.search-page .filter-button {
+    appearance: none;
+    -webkit-appearance: none;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: auto;
+    min-height: 52px;
+    padding: 12px 22px;
+
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid #d2d2d2;
+    border-radius: 999px;
+
+    color: #383838;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+/* マウスを重ねたとき */
+.search-page .filter-button:hover {
+    background: linear-gradient(
+        110deg,
+        #fff1f7 0%,
+        #f1f9ff 100%
+    );
+
+    border-color: #b9dff6;
+    box-shadow: 0 5px 16px rgba(232, 164, 195, 0.15);
+
+    transform: translateY(-2px);
+}
+
+/* 選択中 */
+.search-page .filter-button.active {
+    background: linear-gradient(
+        110deg,
+        #ffd5e7 0%,
+        #f9e7f2 50%,
+        #dcefff 100%
+    );
+
+    border-color: #b9dff6;
+    color: #815b79;
+}
+
+/* ジャンルの選択中：水色の外枠 */
+.search-page #category-buttons .filter-button.active {
+    outline: 3px solid #83cff6;
+    outline-offset: 3px;
+
+    box-shadow: 0 3px 12px rgba(143, 206, 244, 0.2);
+}
+
+/* 詳細の選択中：柔らかいグラデーション */
+.search-page #detail-buttons .filter-button.active {
+    background: linear-gradient(
+        110deg,
+        #ffd3e5 0%,
+        #f8e5f0 52%,
+        #e0f1ff 100%
+    );
+}
+
+/* キーボード操作時 */
+.search-page .filter-button:focus-visible {
+    outline: 3px solid #83cff6;
+    outline-offset: 3px;
+}
+
+/* スマートフォン対応 */
+@media (max-width: 600px) {
+    .search-page .filter-buttons {
+        gap: 10px;
+    }
+
+    .search-page .filter-button {
+        min-height: 44px;
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+}
+
+/* ==========================================
+   SEARCHページ限定
+========================================== */
+
+.search-page #category-buttons .filter-button::before,
+.search-page #category-buttons .filter-button::after,
+.search-page #detail-buttons .filter-button::before,
+.search-page #detail-buttons .filter-button::after {
+    content: none !important;
+    display: none !important;
+    background-image: none !important;
+}
+
+/* ボタンを綺麗な楕円形に統一 */
+.search-page #category-buttons .filter-button,
+.search-page #detail-buttons .filter-button {
+    border-radius: 999px !important;
+    clip-path: none !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+}
+
+/* ==========================================
+   共通ヘッダー・ナビゲーション
+   最上部中央揃え
+========================================== */
+
+/* ヘッダーはスクロールに合わせて流れる */
+.common-header {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    z-index: 10;
+}
+
+/* HOME・NEWS・STREAM・MOVIE・他枠配信 */
+.wide-navigation {
+    position: relative !important;
+    top: auto !important;
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    flex-wrap: wrap;
+    gap: 36px;
+
+    width: 100%;
+    min-height: 96px;
+
+    padding: 20px 24px;
+    margin: 0 auto;
+
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* ナビゲーションリンク */
+.wide-navigation a {
+    display: inline-flex !important;
+    justify-content: center;
+    align-items: center;
+
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* ==========================================
+   操作ボタン
+   スクロールに追従
+========================================== */
+
+/* 前のページに戻る */
+.back-button {
+    position: fixed !important;
+
+    top: 24px !important;
+    left: 28px !important;
+    right: auto !important;
+    bottom: auto !important;
+
+    transform: none !important;
+
+    z-index: 10000 !important;
+}
+
+/* 検索ボタン */
+.search-button {
+    position: fixed !important;
+
+    top: 24px !important;
+    right: 112px !important;
+    left: auto !important;
+    bottom: auto !important;
+
+    transform: none !important;
+
+    z-index: 10000 !important;
+}
+
+/* ハンバーガーメニュー */
+.menu-btn {
+    position: fixed !important;
+
+    top: 24px !important;
+    right: 28px !important;
+    left: auto !important;
+    bottom: auto !important;
+
+    transform: none !important;
+
+    z-index: 10001 !important;
+}
+
+/* ==========================================
+   スマートフォン対応
+========================================== */
+
+@media (max-width: 768px) {
+
+    .wide-navigation {
+        gap: 14px;
+        min-height: 80px;
+        padding: 18px 12px;
+    }
+
+    .wide-navigation a {
+        font-size: 12px !important;
+    }
+
+    .back-button {
+        top: 12px !important;
+        left: 12px !important;
+    }
+
+    .search-button {
+        top: 12px !important;
+        right: 76px !important;
+    }
+
+    .menu-btn {
+        top: 12px !important;
+        right: 12px !important;
+    }
+}
+
+
+/* ==========================================
+   ジャンル・詳細フィルター
+   猫のしっぽだけを非表示にする
+========================================== */
+
+#category-buttons .sakuna-tail,
+#detail-buttons .sakuna-tail,
+.filter-buttons .filter-button .sakuna-tail {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* しっぽを外したフィルターの表示を整える */
+#category-buttons .filter-button,
+#detail-buttons .filter-button {
+    overflow: hidden !important;
+}
+
+/* =============================================================
+   詳細を見るボタン：猫耳を右側の猫の顔の上へ配置
+   ============================================================= */
+.btn::before,
+.btn::after {
+  top: -10px;
+  left: auto;
+  width: 15px;
+  height: 17px;
+  border-radius: 3px;
+  z-index: -1;
+}
+.btn::before {
+  right: 46px;
+  transform: rotate(-14deg);
+}
+.btn::after {
+  right: 17px;
+  transform: scaleX(-1) rotate(-14deg);
+}
+@media (max-width: 600px) {
+  .btn::before,
+  .btn::after {
+    top: -8px;
+    width: 12px;
+    height: 14px;
+  }
+  .btn::before { right: 35px; }
+}
+
+
+/* ===== PLAYLIST: 猫顔・耳・しっぽ（6表情ランダム） ===== */
+body:has(.playlist-category) .playlist-button,
+body:has(.playlist-category) .playlist-back-button {
+  position: relative !important;
+  isolation: isolate;
+  overflow: visible !important;
+  border-radius: 28px !important;
+  border: 2px solid #fff !important;
+  padding-right: 77px !important;
+  min-height: 54px;
+  background-color: #fff3fa !important;
+  background-image: var(--sakuna-cat-face, none), linear-gradient(110deg,#ffe8f2,#e5f6ff) !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-size: 54px 40px, cover !important;
+  background-position: right 10px center, center !important;
+  color: #795673 !important;
+  box-shadow: 0 5px 17px rgba(194,120,166,.16), inset 0 1px 0 #fff !important;
+}
+/* 猫耳を右側の顔の真上に揃える */
+body:has(.playlist-category) .playlist-button::before,
+body:has(.playlist-category) .playlist-button::after,
+body:has(.playlist-category) .playlist-back-button::before,
+body:has(.playlist-category) .playlist-back-button::after {
+  content: "" !important;
+  display: block !important;
+  visibility: visible !important;
+  position: absolute !important;
+  top: -11px !important;
+  left: auto !important;
+  right: auto !important;
+  width: 17px !important;
+  height: 19px !important;
+  background: linear-gradient(145deg,#fff2f8,#ffacd0) !important;
+  border: 1px solid #fff !important;
+  clip-path: polygon(9% 100%, 10% 0%, 100% 100%) !important;
+  border-radius: 3px !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+body:has(.playlist-category) .playlist-button::before,
+body:has(.playlist-category) .playlist-back-button::before {
+  right: 51px !important;
+  transform: rotate(-14deg) !important;
+}
+body:has(.playlist-category) .playlist-button::after,
+body:has(.playlist-category) .playlist-back-button::after {
+  right: 19px !important;
+  transform: scaleX(-1) rotate(-14deg) !important;
+}
+body:has(.playlist-category) .playlist-button .sakuna-tail,
+body:has(.playlist-category) .playlist-back-button .sakuna-tail {
+  display: block !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+}
+
+/* =====================================================
+   PLAYLIST 猫耳：猫顔画像の中心を基準に左右対称配置
+   ===================================================== */
+body:has(.playlist-category) .playlist-button,
+body:has(.playlist-category) .playlist-back-button {
+    --playlist-face-right: 10px;
+    --playlist-face-width: 54px;
+    --playlist-ear-width: 16px;
+    --playlist-ear-gap: 14px;
+    background-position: right var(--playlist-face-right) center, center !important;
+    background-size: var(--playlist-face-width) 40px, cover !important;
+}
+
+body:has(.playlist-category) .playlist-button::before,
+body:has(.playlist-category) .playlist-back-button::before {
+    /* 顔の中央から左へ：顔幅の半分 + 耳間隔の半分 */
+    right: calc(var(--playlist-face-right) + var(--playlist-face-width) / 2 + var(--playlist-ear-gap) / 2) !important;
+    width: var(--playlist-ear-width) !important;
+    top: -11px !important;
+}
+body:has(.playlist-category) .playlist-button::after,
+body:has(.playlist-category) .playlist-back-button::after {
+    /* 顔の中央から右へ：左右対称 */
+    right: calc(var(--playlist-face-right) + var(--playlist-face-width) / 2 - var(--playlist-ear-gap) / 2 - var(--playlist-ear-width)) !important;
+    width: var(--playlist-ear-width) !important;
+    top: -11px !important;
 }

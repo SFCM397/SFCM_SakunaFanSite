@@ -46,6 +46,12 @@ document.addEventListener(
         // SEARCHページの絞り込み
         setupSearchFilter();
 
+        // DOMの準備と検索データ読み込み後に詳細検索を初期化
+        setupDetailFilter();
+
+        // 1文字入力するたびに検索結果を絞り込む
+        setupTextSearch();
+
         setupSearchButton();
 
 
@@ -2238,9 +2244,7 @@ function updateSearchCount() {
 }
 
 
-// 詳細タグのクリック処理
-setupDetailFilter();
-
+// 詳細タグのクリック処理はDOMContentLoaded内で登録します。
 
 
 // ========================================
@@ -3877,4 +3881,455 @@ function setupSearchFilter() {
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once: true});
   else install();
+})();
+
+
+/* ========================================
+   全ページ共通：スクロール中は操作ボタンを非表示
+   スクロール停止350ms後に再表示
+   ======================================== */
+(() => {
+  const installScrollButtonVisibility = () => {
+    if (document.getElementById('sakuna-scroll-buttons-style')) return;
+
+    const style = document.createElement('style');
+    style.id = 'sakuna-scroll-buttons-style';
+    style.textContent = `
+      .menu-btn, .search-button, .back-button, .sakuna-page-top,
+      .sakuna-page-top__button {
+        transition: opacity 0.25s ease, visibility 0.25s ease !important;
+      }
+      body.sakuna-is-scrolling .menu-btn,
+      body.sakuna-is-scrolling .search-button,
+      body.sakuna-is-scrolling .back-button,
+      body.sakuna-is-scrolling .sakuna-page-top,
+      body.sakuna-is-scrolling .sakuna-page-top__button {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .menu-btn, .search-button, .back-button, .sakuna-page-top,
+        .sakuna-page-top__button { transition: none !important; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    let stopTimer;
+    window.addEventListener('scroll', () => {
+      document.body.classList.add('sakuna-is-scrolling');
+      window.clearTimeout(stopTimer);
+      stopTimer = window.setTimeout(() => {
+        document.body.classList.remove('sakuna-is-scrolling');
+      }, 350);
+    }, { passive: true });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', installScrollButtonVisibility, { once: true });
+  } else {
+    installScrollButtonVisibility();
+  }
+})();
+
+(function applySearchScreenshotStyle() {
+    if (document.getElementById('sakuna-search-screenshot-style')) return;
+    const style = document.createElement('style');
+    style.id = 'sakuna-search-screenshot-style';
+    style.textContent = '/* SEARCHページ：参考画像のピンク×水色デザイン */\nbody.search-page .search-area {width:calc(100% - 48px);max-width:1410px;margin:28px auto 32px;}\nbody.search-page .filter-section {background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.9);padding:26px 24px 24px;margin-bottom:22px;border-radius:20px;box-shadow:0 10px 28px rgba(123,107,137,.11);}\nbody.search-page .filter-section h3 {font-size:19px;letter-spacing:.05em;color:#936181;margin:0 0 18px;font-weight:800;}\nbody.search-page .filter-buttons {display:flex;flex-wrap:wrap;align-items:center;gap:11px 12px;}\nbody.search-page .filter-button,body.search-page .filter-button:hover,body.search-page .filter-button:focus-visible {font-size:16px;line-height:1.4;font-weight:700;padding:13px 21px;min-height:50px;white-space:normal;border:1px solid #d2d2d2;border-radius:28px;background:#fff;color:#343434;box-shadow:none;transform:none;text-shadow:none;}\nbody.search-page .filter-button:hover {border-color:#c7a9c5;background:#fff8fc;}\nbody.search-page .filter-button.active,body.search-page .filter-button.active:hover {background:linear-gradient(105deg,#ffd5e6,#e5f5ff)!important;color:#7d5275!important;border-color:transparent!important;box-shadow:0 0 0 2px #fff,0 0 0 5px #8cd4f8!important;}\nbody.search-page #detail-buttons .filter-button.active,body.search-page #detail-buttons .filter-button.active:hover {box-shadow:0 0 0 2px #fff,0 0 0 5px #8cd4f8!important;}\nbody.search-page .filter-button::before,body.search-page .filter-button::after {display:none!important;}\nbody.search-page #detail-section {display:none;}\nbody.search-page #search-result-count {color:#555;font-size:17px;}\n@media(max-width:650px){body.search-page .search-area{width:calc(100% - 24px);margin:18px auto;}body.search-page .filter-section{padding:18px 14px;border-radius:16px;}body.search-page .filter-buttons{gap:8px;}body.search-page .filter-button,body.search-page .filter-button:hover,body.search-page .filter-button:focus-visible{font-size:13px;min-height:40px;padding:9px 13px;}}\n';
+    document.head.appendChild(style);
+})();
+
+
+// ========================================
+// SEARCHページ：入力型リアルタイム検索
+// ジャンル・詳細と組み合わせて1文字から部分一致
+// ========================================
+function setupTextSearch() {
+    const results = document.getElementById('search-results');
+    const categories = document.getElementById('category-buttons');
+    const details = document.getElementById('detail-buttons');
+    if (!results || !categories) return;
+    if (document.getElementById('sakuna-text-search')) return;
+
+    const style = document.createElement('style');
+    style.textContent = `
+      .search-page .sakuna-text-search-panel {
+        margin: 20px 0 24px; padding: 24px;
+        border-radius: 20px;
+        background: rgba(255,255,255,.88);
+        box-shadow: 0 10px 28px rgba(134,150,179,.12);
+      }
+      .search-page .sakuna-text-search-title {
+        display:block; margin-bottom: 14px; font-weight: 800;
+        color: #996381; font-size: 18px;
+      }
+      .search-page .sakuna-text-search-field {
+        display:flex; align-items:center; gap:12px;
+        border: 1px solid #d6d9e0; border-radius: 999px;
+        background: #fff; padding: 6px 12px 6px 20px;
+        transition: box-shadow .2s, border-color .2s;
+      }
+      .search-page .sakuna-text-search-field:focus-within {
+        border-color:#8dcff4; box-shadow:0 0 0 3px rgba(141,207,244,.3);
+      }
+      .search-page #sakuna-text-search {
+        width:100%; min-width:0; border:0!important; outline:0!important;
+        background:transparent!important; box-shadow:none!important;
+        font:inherit; font-size:16px; padding:10px 0; color:#39343d;
+      }
+      .search-page .sakuna-text-search-clear {
+        border:0; border-radius:999px; background:linear-gradient(110deg,#ffe0ec,#e1f2ff);
+        color:#785d77; padding:9px 16px; font-weight:700; cursor:pointer;
+        white-space:nowrap;
+      }
+      .search-page .sakuna-text-search-note {
+        margin:10px 0 0; color:#73717a; font-size:13px;
+      }
+      .search-page .sakuna-search-empty {
+        padding:24px; text-align:center; color:#86667b;
+        background:rgba(255,255,255,.82); border-radius:16px;
+      }
+    `;
+    document.head.appendChild(style);
+
+    const panel = document.createElement('section');
+    panel.className = 'sakuna-text-search-panel';
+    const label = document.createElement('label');
+    label.className = 'sakuna-text-search-title';
+    label.htmlFor = 'sakuna-text-search';
+    label.textContent = 'キーワード検索';
+    const field = document.createElement('div');
+    field.className = 'sakuna-text-search-field';
+    const input = document.createElement('input');
+    input.type = 'search';
+    input.id = 'sakuna-text-search';
+    input.placeholder = '配信者名・ゲーム名などを入力…';
+    input.autocomplete = 'off';
+    const clear = document.createElement('button');
+    clear.type = 'button';
+    clear.className = 'sakuna-text-search-clear';
+    clear.textContent = 'クリア';
+    field.append(input, clear);
+    const note = document.createElement('p');
+    note.className = 'sakuna-text-search-note';
+    note.textContent = '1文字から検索できます。ジャンル・詳細との組み合わせも可能です。';
+    panel.append(label, field, note);
+
+    const resultHeading = results.closest('section') || results;
+    if (resultHeading.parentNode) {
+        resultHeading.parentNode.insertBefore(panel, resultHeading);
+    } else {
+        results.before(panel);
+    }
+
+    const empty = document.createElement('p');
+    empty.className = 'sakuna-search-empty';
+    empty.textContent = '該当する記事がありません。';
+    empty.hidden = true;
+    results.after(empty);
+
+    const normalize = value => String(value || '')
+        .normalize('NFKC').toLocaleLowerCase('ja-JP')
+        .replace(/\s+/g, ' ').trim();
+    const splitTags = value => String(value || '').split(',').map(normalize);
+
+    function applySearch() {
+        const category = categories.querySelector('.filter-button.active')?.dataset.category || 'all';
+        const detail = details?.querySelector('.filter-button.active')?.dataset.detail || 'all';
+        const query = normalize(input.value);
+        let count = 0;
+        const cards = results.querySelectorAll('.news-card');
+        cards.forEach(card => {
+            const categoryMatch = category === 'all' || splitTags(card.dataset.category).includes(normalize(category));
+            const detailMatch = detail === 'all' || splitTags(card.dataset.detail).includes(normalize(detail));
+            // 本文・タイトル・カテゴリ・詳細を対象に部分一致検索
+            const searchable = normalize([
+                card.textContent, card.dataset.category, card.dataset.detail
+            ].join(' '));
+            const matches = categoryMatch && detailMatch && (!query || searchable.includes(query));
+            card.style.display = matches ? '' : 'none';
+            if (matches) count++;
+        });
+        const countElement = document.getElementById('search-result-count');
+        if (countElement) countElement.textContent = '表示中：' + count + ' 件';
+        empty.hidden = count !== 0 || cards.length === 0;
+        if (cards.length === 0) {
+            empty.hidden = false;
+            empty.textContent = '記事を読み込めませんでした。Live Serverなどでページを開いてください。';
+        } else {
+            empty.textContent = '該当する記事がありません。';
+        }
+    }
+    input.addEventListener('input', applySearch);
+    clear.addEventListener('click', () => { input.value = ''; applySearch(); input.focus(); });
+    // 既存のジャンル・詳細クリック処理の後に、入力条件も含めて再判定
+    categories.addEventListener('click', event => {
+        if (event.target.closest('.filter-button')) applySearch();
+    });
+    if (details) details.addEventListener('click', event => {
+        if (event.target.closest('.filter-button')) applySearch();
+    });
+    applySearch();
+}
+
+
+
+// ===== SAKUNA LUXE: スクロール登場・検索欄・検索件数 =====
+(() => {
+  function installSakunaLuxe() {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const results = document.getElementById('search-results');
+    // 既存の入力検索欄にアイコンを追加。検索ロジックは変更しない。
+    const searchField = document.querySelector('.search-page .sakuna-text-search-field');
+    if (searchField && !searchField.querySelector('.sakuna-search-magnifier')) {
+      const icon = document.createElement('span');
+      icon.className = 'sakuna-search-magnifier';
+      icon.textContent = '⌕';
+      icon.setAttribute('aria-hidden', 'true');
+      searchField.prepend(icon);
+    }
+    // 件数の変化を検知して控えめにアニメーション
+    const count = document.getElementById('search-result-count');
+    if (count && !reduceMotion) {
+      let lastText = count.textContent;
+      const observer = new MutationObserver(() => {
+        const nextText = count.textContent;
+        if (nextText === lastText) return;
+        lastText = nextText;
+        count.classList.remove('sakuna-count-updated');
+        void count.offsetWidth;
+        count.classList.add('sakuna-count-updated');
+      });
+      observer.observe(count, {childList:true,characterData:true,subtree:true});
+    }
+    // 見出しに控えめな猫モチーフ（重複追加しない）
+    document.querySelectorAll('main h2, main h3, .search-page section > h2').forEach(heading => {
+      if (!heading.closest('.news-card') && !heading.classList.contains('sakuna-paw-heading')) {
+        heading.classList.add('sakuna-paw-heading');
+      }
+    });
+    if (reduceMotion || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('sakuna-revealed');
+        io.unobserve(entry.target);
+      });
+    }, {threshold:.08,rootMargin:'0px 0px 35px 0px'});
+    const watch = node => {
+      if (!(node instanceof Element) || node.matches('.sakuna-reveal-ready')) return;
+      node.classList.add('sakuna-reveal-ready');
+      io.observe(node);
+    };
+    // 既存の検索結果は動的に読み込まれるため、後から追加されたカードも監視
+    document.querySelectorAll('.news-card, main h2, main h3, .search-page section > h2').forEach(watch);
+    if (results) {
+      const mo = new MutationObserver(records => {
+        for (const record of records) for (const node of record.addedNodes) {
+          if (!(node instanceof Element)) continue;
+          if (node.matches('.news-card')) watch(node);
+          node.querySelectorAll?.('.news-card').forEach(watch);
+        }
+      });
+      mo.observe(results,{childList:true,subtree:true});
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', installSakunaLuxe, {once:true});
+  else installSakunaLuxe();
+})();
+
+
+/* ==========================================================
+   SAKUNA CAT DECORATIONS — 追加用コード
+   1. カードからひょっこり猫 / 2. マウス肉球
+   3. フッターの眠る猫 / 4. 猫のしっぽ
+========================================================== */
+(() => {
+  'use strict';
+  if (window.__sakunaCatDecorationsLoaded) return;
+  window.__sakunaCatDecorationsLoaded = true;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const css = `
+    .sakuna-peek-cat { position:absolute; right:12px; top:0; width:58px; height:47px;
+      transform:translateY(-39%) rotate(5deg); transform-origin:50% 100%;
+      pointer-events:none; z-index:4; transition:transform .38s cubic-bezier(.2,.8,.2,1); }
+    .sakuna-peek-cat svg {width:100%;height:100%;overflow:visible;filter:drop-shadow(0 3px 4px rgba(167,113,143,.16));}
+    .sakuna-peek-cat .sakuna-eye {transform-box:fill-box;transform-origin:center;animation:sakuna-cat-blink 6s infinite;}
+    .sakuna-cat-card:hover .sakuna-peek-cat,
+    .sakuna-cat-card:focus-within .sakuna-peek-cat {transform:translateY(-72%) rotate(-3deg);}
+    .sakuna-cat-card {overflow:visible !important;}
+    @keyframes sakuna-cat-blink {0%,43%,46%,100%{transform:scaleY(1)}44%,45%{transform:scaleY(.08)}}
+    .sakuna-mouse-paw {position:fixed;z-index:99999;pointer-events:none;width:19px;height:19px;
+      transform:translate(-50%,0) rotate(var(--paw-rotate,0deg));
+      animation:sakuna-paw-fade .8s ease-out forwards;}
+    .sakuna-mouse-paw svg {display:block;width:100%;height:100%;}
+    @keyframes sakuna-paw-fade {0%{opacity:.68;scale:.7}45%{opacity:.55;scale:1}100%{opacity:0;scale:1.2}}
+    .sakuna-sleep-cat {display:flex;align-items:flex-end;justify-content:flex-end;
+      margin:24px clamp(16px,6vw,90px) 12px auto;width:124px;max-width:35vw;
+      position:relative;z-index:2;}
+    .sakuna-sleep-cat svg {display:block;width:100%;height:auto;
+      transform-origin:50% 80%;animation:sakuna-cat-breathe 3.5s ease-in-out infinite;
+      filter:drop-shadow(0 5px 9px rgba(172,123,151,.16));}
+    .sakuna-sleep-cat .sakuna-sleep-open {opacity:0;transition:opacity .2s;}
+    .sakuna-sleep-cat:hover .sakuna-sleep-open {opacity:1;}
+    .sakuna-sleep-cat:hover .sakuna-sleep-closed {opacity:0;}
+    @keyframes sakuna-cat-breathe {0%,100%{transform:scale(1)}50%{transform:scale(1.035,.975)}}
+    .sakuna-tail-btn {position:relative !important;overflow:visible !important;isolation:isolate;}
+    .sakuna-tail {position:absolute;left:-13px;right:auto;bottom:6px;width:22px;height:33px;
+      pointer-events:none;z-index:-1;transform-origin:70% 90%;transform:rotate(-10deg);
+      transition:transform .3s;}
+    .sakuna-tail svg {width:100%;height:100%;overflow:visible;transform:scaleX(-1);}
+    .sakuna-tail-btn:hover .sakuna-tail,.sakuna-tail-btn:focus-visible .sakuna-tail {
+      animation:sakuna-tail-wag .8s ease-in-out infinite alternate;}
+    @keyframes sakuna-tail-wag {from{transform:rotate(14deg)}to{transform:rotate(-22deg)}}
+    @media (max-width:600px){.sakuna-peek-cat{width:44px;height:36px;right:8px}.sakuna-sleep-cat{width:90px}}
+    @media (prefers-reduced-motion:reduce){
+      .sakuna-peek-cat,.sakuna-sleep-cat svg,.sakuna-peek-cat .sakuna-eye,.sakuna-tail {animation:none !important;transition:none !important;}
+      .sakuna-mouse-paw{display:none !important;}
+    }
+  `;
+  const style = document.createElement('style');
+  style.id = 'sakuna-cat-decorations-style';
+  style.textContent = css;
+  document.head.appendChild(style);
+
+  const peekCat = `<span class="sakuna-peek-cat" aria-hidden="true"><svg viewBox="0 0 64 54" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 27 7 5 23 17 Q32 12 41 17 L57 5 56 28 Q63 44 48 49 Q32 56 16 49 Q1 43 8 27Z" fill="#fffafc" stroke="#d9a0bd" stroke-width="2.3" stroke-linejoin="round"/>
+    <path d="M12 12 13 24 23 19Z M52 12 51 24 41 19Z" fill="#f8c9dd"/>
+    <g class="sakuna-eye" fill="#8d6582"><ellipse cx="23" cy="33" rx="2.5" ry="3.5"/><ellipse cx="41" cy="33" rx="2.5" ry="3.5"/></g>
+    <path d="M29 40 Q32 43 35 40 L32 38Z" fill="#e79cbd"/><path d="M32 42q-4 5-7 0m7 0q4 5 7 0" stroke="#a77b94" fill="none" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M17 40 7 38 M17 44 8 45 M47 40 57 38 M47 44 56 45" stroke="#cda4b9" stroke-width="1.3" stroke-linecap="round"/>
+    <circle cx="16" cy="39" r="4" fill="#ffc7db" opacity=".65"/><circle cx="48" cy="39" r="4" fill="#ffc7db" opacity=".65"/>
+  </svg></span>`;
+
+  const sleepCat = `<div class="sakuna-sleep-cat" aria-hidden="true" title="おやすみにゃ…"><svg viewBox="0 0 150 112" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="75" cy="102" rx="60" ry="7" fill="#dceeff" opacity=".8"/>
+    <path d="M28 83 Q11 50 45 45 Q76 27 110 52 Q139 72 112 94 Q88 107 49 99 Q28 98 28 83Z" fill="#fff9fc" stroke="#d9a4bd" stroke-width="2.4"/>
+    <path d="M40 61 37 27 60 43 Q77 35 93 43 L115 27 112 63 Q117 85 95 93 Q75 101 54 92 Q33 83 40 61Z" fill="#fff" stroke="#d9a4bd" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M42 35 45 53 57 45Z M109 35 106 53 95 45Z" fill="#f6c6d9"/>
+    <g class="sakuna-sleep-closed" stroke="#946e87" stroke-width="2.5" fill="none" stroke-linecap="round"><path d="M56 69q8 8 16 0 M81 69q8 8 16 0"/></g>
+    <g class="sakuna-sleep-open" fill="#946e87"><ellipse cx="64" cy="70" rx="3.2" ry="4.2"/><ellipse cx="89" cy="70" rx="3.2" ry="4.2"/></g>
+    <path d="M73 78 77 81 81 78Z" fill="#e9a0be"/><path d="M77 81q-3 4-6 0m6 0q3 4 6 0" stroke="#946e87" stroke-width="1.4" fill="none"/>
+    <ellipse cx="51" cy="78" rx="7" ry="4" fill="#ffd4e4"/><ellipse cx="102" cy="78" rx="7" ry="4" fill="#ffd4e4"/>
+    <path d="M110 89q30 4 24-20q-3-8-11-5" stroke="#d9a4bd" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M110 89q30 4 24-20q-3-8-11-5" stroke="#fff9fc" stroke-width="6" fill="none" stroke-linecap="round"/>
+  </svg></div>`;
+
+  const tail = `<span class="sakuna-tail" aria-hidden="true"><svg viewBox="0 0 26 40" xmlns="http://www.w3.org/2000/svg"><path d="M4 37Q17 25 10 15Q4 4 19 3" stroke="#d59fbd" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M4 37Q17 25 10 15Q4 4 19 3" stroke="#fff0f7" stroke-width="5" fill="none" stroke-linecap="round"/></svg></span>`;
+
+  function decorate(root) {
+    const cardSelector = '#latest-news .news-card, #latest-stream .news-card, #latest-movie .news-card, #latest-other-stream .news-card, .news-list .news-card, .cards > .news-card';
+    const cards = root.querySelectorAll ? root.querySelectorAll(cardSelector) : [];
+    cards.forEach(card => {
+      if (card.dataset.sakunaPeekAdded) return;
+      card.dataset.sakunaPeekAdded = 'true';
+      card.classList.add('sakuna-cat-card');
+      // 既存のクリックやカード内部の構造には触れず、装飾だけ追加する。
+      if (getComputedStyle(card).position === 'static') card.style.position = 'relative';
+      card.insertAdjacentHTML('beforeend', peekCat);
+    });
+    const buttons = root.querySelectorAll ? root.querySelectorAll('.btn, .profile-btn, .filter-button') : [];
+    buttons.forEach(button => {
+      if (button.dataset.sakunaTailAdded) return;
+      button.dataset.sakunaTailAdded = 'true';
+      button.classList.add('sakuna-tail-btn');
+      button.insertAdjacentHTML('beforeend', tail);
+    });
+  }
+
+  function init() {
+    decorate(document);
+    if (!document.querySelector('.sakuna-sleep-cat')) {
+      document.body.insertAdjacentHTML('beforeend', sleepCat);
+    }
+    // 動的に読み込まれたニュース・配信カードも装飾。
+    const observer = new MutationObserver(records => {
+      if (!records.some(record => [...record.addedNodes].some(node => node.nodeType === 1 && !node.classList?.contains('sakuna-peek-cat') && !node.classList?.contains('sakuna-tail')))) return;
+      decorate(document);
+    });
+    observer.observe(document.body, {childList:true, subtree:true});
+
+    // 足跡はPCのマウス移動時だけ。多量生成しないよう間引く。
+    if (!reduceMotion.matches && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+      let last = 0, count = 0;
+      document.addEventListener('pointermove', event => {
+        if (event.pointerType !== 'mouse') return;
+        const now = performance.now();
+        if (now - last < 100) return;
+        last = now;
+        const paw = document.createElement('span');
+        paw.className = 'sakuna-mouse-paw';
+        paw.style.left = event.clientX + 'px';
+        paw.style.top = (event.clientY + 10) + 'px';
+        paw.style.setProperty('--paw-rotate', ((count++ % 2) ? 17 : -17) + 'deg');
+        const color = count % 2 ? '#f2b6d2' : '#b9dff5';
+        paw.innerHTML = `<svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" fill="${color}"><ellipse cx="14" cy="19" rx="8" ry="6"/><ellipse cx="5" cy="12" rx="3" ry="4"/><ellipse cx="11" cy="6" rx="3" ry="4"/><ellipse cx="19" cy="6" rx="3" ry="4"/><ellipse cx="25" cy="12" rx="3" ry="4"/></svg>`;
+        // body の zoom の影響を受けないよう html 直下に配置する。
+        // clientX/clientY と position:fixed を同じ画面座標系に揃える。
+        document.documentElement.appendChild(paw);
+        paw.addEventListener('animationend', () => paw.remove(), {once:true});
+        setTimeout(() => paw.remove(), 1100);
+      }, {passive:true});
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, {once:true});
+  else init();
+})();
+
+
+/* PLAYLISTページ：猫耳・しっぽ＋6種類のランダムな表情 */
+(function () {
+  const isPlaylist = () => !!document.querySelector('.playlist-category');
+  // 他のHTMLと共通の6表情（目・口・頬・ひげの形も同じ）
+  const ink = '#a96f93';
+  const eyes = [
+    '<ellipse cx="21" cy="17" rx="3" ry="4"/><ellipse cx="43" cy="17" rx="3" ry="4"/>',
+    '<path d="M16 18q5 -7 10 0M38 18q5 -7 10 0" fill="none" stroke-width="2.6"/>',
+    '<path d="M17 17h8M39 17h8" fill="none" stroke-width="2.5" stroke-linecap="round"/>',
+    '<ellipse cx="21" cy="17" rx="3" ry="4"/><path d="M38 18q5 -7 10 0" fill="none" stroke-width="2.6"/>',
+    '<circle cx="21" cy="17" r="4"/><circle cx="43" cy="17" r="4"/><circle cx="22" cy="15" r="1.2" fill="white"/><circle cx="44" cy="15" r="1.2" fill="white"/>',
+    '<path d="M16 18q5 5 10 0M38 18q5 5 10 0" fill="none" stroke-width="2.5"/>'
+  ];
+  const mouths = [
+    '<path d="M32 31v3m0 0q-5 6-9 0m9 0q5 6 9 0" fill="none" stroke-width="1.8"/>',
+    '<path d="M27 34q5 7 10 0" fill="none" stroke-width="2"/>',
+    '<path d="M32 31v3m0 0q-5 3-8 0m8 0q5 3 8 0" fill="none" stroke-width="1.8"/>',
+    '<ellipse cx="32" cy="36" rx="3.2" ry="3.8" fill="#d889a8" stroke="none"/>',
+    '<path d="M26 34q6 7 12 0" fill="none" stroke-width="2.4"/>',
+    '<path d="M28 35q4 3 8 0" fill="none" stroke-width="1.8"/>'
+  ];
+  const faces = eyes.map((eye, i) => {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 44">` +
+      `<g stroke="${ink}" fill="${ink}" stroke-linecap="round">` +
+      `<path d="M12 26 2 22M12 31 2 33M52 26 62 22M52 31 62 33" fill="none" stroke-width="2.2"/>` +
+      eye + `<path d="M28 27Q32 24 36 27L32 31Z" fill="#ec8daf" stroke="none"/>` +
+      mouths[i] + `</g>` +
+      `<ellipse cx="13" cy="25" rx="6" ry="3" fill="#f8aec9" opacity=".55"/>` +
+      `<ellipse cx="51" cy="25" rx="6" ry="3" fill="#f8aec9" opacity=".55"/>` +
+      `</svg>`;
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+  });
+  const tail = '<span class="sakuna-tail" aria-hidden="true"><svg viewBox="0 0 26 40" xmlns="http://www.w3.org/2000/svg"><path d="M4 37Q17 25 10 15Q4 4 19 3" stroke="#d59fbd" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M4 37Q17 25 10 15Q4 4 19 3" stroke="#fff0f7" stroke-width="5" fill="none" stroke-linecap="round"/></svg></span>';
+  function decorate() {
+    if (!isPlaylist()) return;
+    document.querySelectorAll('.playlist-button, .playlist-back-button').forEach(button => {
+      if (button.dataset.sakunaPlaylistFace === 'true') return;
+      button.dataset.sakunaPlaylistFace = 'true';
+      if (!button.dataset.sakunaCatFaceSet) {
+        button.style.setProperty('--sakuna-cat-face', faces[Math.floor(Math.random() * faces.length)]);
+        button.dataset.sakunaCatFaceSet = 'true';
+      }
+      button.classList.add('sakuna-tail-btn');
+      if (!button.querySelector('.sakuna-tail')) button.insertAdjacentHTML('beforeend', tail);
+    });
+  }
+  function init() {
+    if (!isPlaylist()) return;
+    decorate();
+    new MutationObserver(decorate).observe(document.body, { childList: true, subtree: true });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, {once:true});
+  else init();
 })();
