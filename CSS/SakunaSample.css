@@ -2578,3 +2578,14 @@ body:has(.playlist-category) .playlist-back-button::after {
     width: var(--playlist-ear-width) !important;
     top: -11px !important;
 }
+
+/* ========================================
+   カレンダーボタンの高さを調整
+   ======================================== */
+
+.btn {
+    min-height: 0;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    line-height: 1.4;
+}
