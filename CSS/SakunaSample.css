@@ -2589,3 +2589,144 @@ body:has(.playlist-category) .playlist-back-button::after {
     padding-bottom: 15px;
     line-height: 1.4;
 }
+
+
+/* ========================================
+   TOP 特別記事
+   ======================================== */
+
+.special-article {
+    width: 100%;
+    max-width: 1200px;
+    margin: 30px auto 45px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* 特別記事ラベル */
+.special-article-label {
+    position: absolute;
+    top: -15px;
+    left: -10px;
+    z-index: 2;
+
+    padding: 10px 30px;
+    background: linear-gradient(135deg, #ff75b5, #ffb6d9);
+    color: #fff;
+
+    font-size: 24px;
+    font-weight: bold;
+
+    border: 4px solid #fff;
+    border-radius: 40px;
+    box-shadow: 0 4px 10px rgba(220, 100, 160, 0.25);
+}
+
+/* バナー全体 */
+.special-article-banner {
+    display: block;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 6;
+
+    overflow: hidden;
+    border-radius: 25px;
+    border: 3px solid #ffc5e2;
+
+    box-shadow: 0 5px 15px rgba(220, 130, 180, 0.2);
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+/* 特別記事画像 */
+.special-article-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+}
+
+/* ホバー時 */
+.special-article-banner:hover .special-article-image {
+    transform: scale(1.04);
+}
+
+/* 画像上の文字 */
+.special-article-content {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    width: 55%;
+    padding: 25px;
+
+    box-sizing: border-box;
+    text-align: center;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 240, 249, 0.9) 25%,
+        rgba(255, 240, 249, 0.96)
+    );
+}
+
+/* 記事タイトル */
+.special-article-content h2 {
+    margin: 0 0 18px;
+    color: #a95791;
+    font-size: clamp(20px, 3vw, 36px);
+    font-weight: bold;
+}
+
+/* 読むボタン */
+.special-article-button {
+    display: inline-block;
+    padding: 12px 28px;
+
+    background: #fff;
+    color: #b45b98;
+
+    border: 2px solid #ffafd5;
+    border-radius: 30px;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    box-shadow: 0 3px 8px rgba(220, 130, 180, 0.2);
+}
+
+/* スマートフォン */
+@media (max-width: 600px) {
+
+    .special-article {
+        margin: 25px auto 35px;
+    }
+
+    .special-article-banner {
+        aspect-ratio: 4 / 3;
+        border-radius: 18px;
+    }
+
+    .special-article-label {
+        font-size: 18px;
+        padding: 8px 20px;
+    }
+
+    .special-article-content {
+        width: 100%;
+        padding: 15px 10px;
+        background: rgba(255, 240, 249, 0.88);
+    }
+
+    .special-article-content h2 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .special-article-button {
+        padding: 9px 20px;
+        font-size: 14px;
+    }
+}
