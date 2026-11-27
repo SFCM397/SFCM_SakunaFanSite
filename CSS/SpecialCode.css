@@ -1,0 +1,778 @@
+
+/* ========================================
+   特別記事ページ専用
+   ======================================== */
+
+.special-article-page {
+
+    font-family:
+        "Zen Maru Gothic",
+        sans-serif;
+
+}
+
+
+/* メイン全体 */
+
+.special-main {
+
+    width:100%;
+
+    max-width:1500px;
+
+    margin:0 auto;
+
+    padding:10px 20px 50px;
+
+    box-sizing:border-box;
+
+}
+
+
+/* ========================================
+   パンくずリスト
+   ======================================== */
+
+.special-breadcrumb {
+
+    margin:15px 0 25px;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    color:#60405d;
+
+}
+
+.special-breadcrumb a {
+
+    color:#d94d9c;
+
+    text-decoration:none;
+
+}
+
+.special-breadcrumb a:hover {
+
+    text-decoration:underline;
+
+}
+
+
+/* ========================================
+   特別記事メインエリア
+   ======================================== */
+
+.special-hero {
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    align-items:center;
+
+    gap:25px;
+
+    padding:15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fffafd,
+            #ffe8f4
+        );
+
+    border:4px solid #f5c96d;
+
+    border-radius:30px;
+
+    box-shadow:
+        0 6px 15px rgba(180,90,140,0.2);
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+
+/* メイン画像 */
+
+.special-hero-image {
+
+    position:relative;
+
+    min-width:0;
+
+}
+
+
+.special-hero-image img {
+
+    display:block;
+
+    width:100%;
+
+    height:400px;
+
+    object-fit:cover;
+
+    border-radius:20px;
+
+}
+
+
+/* 特別記事リボン */
+
+.special-ribbon {
+
+    position:absolute;
+
+    top:20px;
+
+    left:-5px;
+
+    padding:12px 25px;
+
+    background:#ed4d9d;
+
+    color:#fff;
+
+    font-size:20px;
+
+    font-weight:900;
+
+    border:3px solid #ffd878;
+
+    border-radius:8px;
+
+    box-shadow:0 4px 8px rgba(0,0,0,0.2);
+
+    transform:rotate(-5deg);
+
+}
+
+
+/* ========================================
+   記事タイトル部分
+   ======================================== */
+
+.special-hero-content {
+
+    padding:20px;
+
+}
+
+
+.special-label {
+
+    display:inline-block;
+
+    padding:8px 22px;
+
+    background:#ed4d9d;
+
+    color:white;
+
+    border-radius:30px;
+
+    font-weight:bold;
+
+    font-size:18px;
+
+}
+
+
+.special-hero-content h1 {
+
+    margin:20px 0;
+
+    font-size:clamp(24px, 2.5vw, 36px);
+
+    line-height:1.5;
+
+    color:#39233f;
+
+}
+
+
+.special-title-line {
+
+    width:100%;
+
+    border-top:3px dashed #f49ac7;
+
+    margin:20px 0;
+
+
+}
+
+
+.special-description {
+
+    font-size:18px;
+
+    line-height:2;
+
+    color:#493b4c;
+
+}
+
+
+.special-date {
+
+    margin-top:20px;
+
+    color:#655080;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+}
+
+
+/* ========================================
+   記事本文エリア
+   ======================================== */
+
+.special-article-content {
+
+    margin-top:30px;
+
+    padding:30px;
+
+    background:#fffafd;
+
+    border-radius:25px;
+
+    box-shadow:
+        0 5px 15px rgba(180,90,140,0.12);
+
+}
+
+
+/* ========================================
+   導入部分
+   ======================================== */
+
+.special-introduction {
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    align-items:center;
+
+    gap:30px;
+
+    padding:20px;
+
+    background:#fff0f7;
+
+    border-radius:20px;
+
+}
+
+
+.special-intro-text h2 {
+
+    display:inline-block;
+
+    padding:10px 25px;
+
+    margin:0 0 20px;
+
+    background:#ffd1e8;
+
+    border-radius:30px;
+
+    color:#bd3983;
+
+    font-size:25px;
+
+}
+
+
+.special-intro-text p {
+
+    font-size:18px;
+
+    line-height:2;
+
+    color:#493b4c;
+
+}
+
+
+/* ちびイラスト */
+
+.special-chibi {
+
+    text-align:center;
+
+}
+
+
+.special-chibi img {
+
+    width:100%;
+
+    max-width:380px;
+
+    height:260px;
+
+    object-fit:contain;
+
+}
+
+
+.special-chibi p {
+
+    margin:0;
+
+    color:#ed5aa5;
+
+    font-size:23px;
+
+    font-weight:bold;
+
+}
+
+
+/* ========================================
+   記事の各セクション
+   ======================================== */
+
+.special-section {
+
+    margin-top:45px;
+
+    padding:15px 20px;
+
+}
+
+
+.special-section-heading {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-bottom:25px;
+
+    padding-bottom:12px;
+
+    border-bottom:3px solid #f6b7d8;
+
+}
+
+
+.special-section-heading span {
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    width:45px;
+
+    height:45px;
+
+    background:#ed76b1;
+
+    color:#fff;
+
+    border-radius:50%;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+}
+
+
+.special-section-heading h2 {
+
+    margin:0;
+
+    font-size:25px;
+
+    color:#49304a;
+
+}
+
+
+.special-section p {
+
+    font-size:18px;
+
+    line-height:2.1;
+
+    color:#493b4c;
+
+}
+
+
+/* 記事内写真 */
+
+.special-photo {
+
+    width:100%;
+
+    max-width:800px;
+
+    margin:30px auto;
+
+    padding:12px;
+
+    background:#fff0f7;
+
+    border:2px solid #f6c4df;
+
+    border-radius:20px;
+
+    box-sizing:border-box;
+
+}
+
+
+.special-photo img {
+
+    display:block;
+
+    width:100%;
+
+    height:auto;
+
+    border-radius:12px;
+
+}
+
+
+.special-photo p {
+
+    margin:10px 0 0;
+
+    text-align:center;
+
+    font-size:14px;
+
+    color:#86627d;
+
+}
+
+
+/* ========================================
+   記事の締め
+   ======================================== */
+
+.special-ending {
+
+    margin-top:50px;
+
+    padding:40px 20px;
+
+    text-align:center;
+
+    background:#fff0f7;
+
+    border:2px dashed #f4a5ce;
+
+    border-radius:25px;
+
+}
+
+
+.special-ending h2 {
+
+    color:#d94d9c;
+
+    font-size:26px;
+
+}
+
+
+.special-ending p {
+
+    font-size:18px;
+
+    line-height:2;
+
+}
+
+
+.special-ending-decoration {
+
+    margin:15px;
+
+    color:#ed76b1;
+
+    font-size:23px;
+
+    font-weight:bold;
+
+}
+
+
+/* ========================================
+   News一覧へ戻る
+   ======================================== */
+
+.special-back-area {
+
+    margin-top:35px;
+
+    text-align:center;
+
+}
+
+
+.special-back-button {
+
+    display:inline-block;
+
+    padding:15px 55px;
+
+    background:#ffe4f2;
+
+    color:#d94d9c;
+
+    border:2px solid #f5b7d7;
+
+    border-radius:40px;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    text-decoration:none;
+
+    box-shadow:0 4px 8px rgba(180,90,140,0.15);
+
+    transition:0.2s;
+
+}
+
+
+.special-back-button:hover {
+
+    transform:translateY(-3px);
+
+    background:#ffd1e8;
+
+}
+
+
+/* ========================================
+   タブレット・小さめPC
+   ======================================== */
+
+@media (max-width:900px) {
+
+    .special-hero {
+
+        grid-template-columns:1fr;
+
+    }
+
+    .special-hero-image img {
+
+        height:auto;
+
+        max-height:450px;
+
+    }
+
+    .special-introduction {
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+
+/* ========================================
+   スマートフォン
+   ======================================== */
+
+@media (max-width:600px) {
+
+    .special-main {
+
+        padding:5px 10px 35px;
+
+    }
+
+    .special-breadcrumb {
+
+        font-size:13px;
+
+        margin:10px 0 15px;
+
+    }
+
+    .special-hero {
+
+        padding:8px;
+
+        border-width:3px;
+
+        border-radius:18px;
+
+        gap:5px;
+
+    }
+
+    .special-hero-image img {
+
+        height:auto;
+
+        border-radius:12px;
+
+    }
+
+    .special-ribbon {
+
+        top:10px;
+
+        padding:7px 13px;
+
+        font-size:13px;
+
+    }
+
+    .special-hero-content {
+
+        padding:12px 8px;
+
+    }
+
+    .special-label {
+
+        font-size:14px;
+
+        padding:6px 15px;
+
+    }
+
+    .special-hero-content h1 {
+
+        font-size:23px;
+
+        margin:12px 0;
+
+    }
+
+    .special-description {
+
+        font-size:15px;
+
+        line-height:1.9;
+
+    }
+
+    .special-date {
+
+        font-size:14px;
+
+    }
+
+    .special-article-content {
+
+        padding:12px;
+
+        margin-top:20px;
+
+        border-radius:18px;
+
+    }
+
+    .special-introduction {
+
+        padding:15px;
+
+        gap:10px;
+
+    }
+
+    .special-intro-text h2 {
+
+        font-size:19px;
+
+        padding:8px 15px;
+
+    }
+
+    .special-intro-text p {
+
+        font-size:15px;
+
+    }
+
+    .special-chibi img {
+
+        height:200px;
+
+    }
+
+    .special-chibi p {
+
+        font-size:19px;
+
+    }
+
+    .special-section {
+
+        margin-top:30px;
+
+        padding:10px 5px;
+
+    }
+
+    .special-section-heading h2 {
+
+        font-size:20px;
+
+    }
+
+    .special-section p {
+
+        font-size:15px;
+
+        line-height:2;
+
+    }
+
+    .special-ending {
+
+        padding:25px 12px;
+
+    }
+
+    .special-ending h2 {
+
+        font-size:20px;
+
+    }
+
+    .special-ending p {
+
+        font-size:15px;
+
+    }
+
+    .special-back-button {
+
+        padding:12px 30px;
+
+        font-size:16px;
+
+    }
+
+}
